@@ -1,0 +1,132 @@
+===== Pure Autoware ==========
+
+Origin at 
+    x: 3748.71
+    y: 73724.7
+
+ros2 service call /api/localization/initialize autoware_adapi_v1_msgs/srv/InitializeLocalization "pose:
+- header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: 'map'
+  pose:
+    pose:
+      position:
+        x: 3653.998
+        y: 73453.71
+        z: 0.0
+      orientation:
+        x: 0.0
+        y: 0.0
+        z: 0.7313537
+        w: 0.6819984
+    covariance: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]"
+
+
+===== AWSIM ==========
+
+ros2 service call /api/routing/set_route autoware_adapi_v1_msgs/srv/SetRoute "header:
+  stamp:
+    sec: 0
+    nanosec: 0
+  frame_id: 'map'
+option:
+  allow_goal_modification: true
+  allow_while_using_route: true
+goal:
+  position:
+    x: 81376.375
+    y: 50127.8984375
+    z: 37.77809904298835
+  orientation:
+    x: 0.0
+    y: 0.0
+    z: 0.7714407189410505
+    w: 0.6363012000300763
+segments:
+- preferred:
+    id: 255
+    type: 'lane'
+  alternatives: []
+- preferred:
+    id: 492
+    type: 'lane'
+  alternatives: []
+- preferred:
+    id: 245
+    type: 'lane'
+  alternatives: []
+- preferred:
+    id: 248
+    type: 'lane'
+  alternatives: []"
+
+
+ros2 topic pub /autoware/engage autoware_vehicle_msgs/msg/Engage '{engage: True}' -1
+
+ros2 topic pub -1 /pedestrian_spawn_point/walking geometry_msgs/msg/Point32 "{x: 80.52, y: -3.01, z: -270.8}"
+
+
+
+Translation:
+
+- Autoware -> AWSIM: (x, y, z) - (81655.73375, 49696.3545312, 42.470413818) -> (-y, z, x)
+
+- Autoware -> CommonRoad: (x, y, z) + (15468841.7453, 4207650.7429, 0) -> (x, y, z)
+
+
+Remove trafficLightRef: sed -i 's|<trafficLightRef ref="[^"]*" />||g' scenarios/ZAM_AWSIM-1_1_T-1_shifted.xml
+Remove z: sed -i 's|<z>[^<]*</z>||g' scenarios/ZAM_AWSIM-1_1_T-1_shifted.xml
+
+<planningProblem id="100">
+    <initialState>
+      <position>
+        <point>
+          <x>81377.359375</x>
+          <y>49916.90234375</y>
+        </point>
+      </position>
+      <orientation>
+        <exact>0.6102813598316025</exact>
+      </orientation>
+      <time>
+        <exact>0</exact>
+      </time>
+      <velocity>
+        <exact>0.0</exact>
+      </velocity>
+      <yawRate>
+        <exact>0.0</exact>
+      </yawRate>
+      <slipAngle>
+        <exact>0.0</exact>
+      </slipAngle>
+    </initialState>
+  </planningProblem>
+
+
+
+
+  thayerh@gaffel:~/AWSIM$ ros2 topic echo /planning/mission_planning/echo_back_goal_pose
+header:
+  stamp:
+    sec: 187
+    nanosec: 266477894
+  frame_id: map
+pose:
+  position:
+    x: 81378.328125
+    y: 50116.1015625
+    z: 38.07077657956847
+  orientation:
+    x: 0.0
+    y: 0.0
+    z: 0.7634580129471346
+    w: 0.6458574629644012
+---
